@@ -4,6 +4,9 @@ on:
   release:
     types: [created]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build Executables
@@ -29,22 +32,9 @@ jobs:
         run: |
           GOOS=windows GOARCH=amd64 go build -o compressmaps.exe -ldflags="-s -w"
 
-      - name: Upload Linux executable to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./compressmaps-linux
-          asset_name: compressmaps-linux
-          asset_content_type: application/octet-stream
-
-      - name: Upload Windows executable to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./compressmaps.exe
-          asset_name: compressmaps.exe
-          asset_content_type: application/octet-stream
+          files: |
+            compressmaps-linux
+            compressmaps.exe
